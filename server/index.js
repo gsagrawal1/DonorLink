@@ -12,7 +12,7 @@ app.use(express.urlencoded({extended : false}))
 app.use(cookieParser());
 const cors = require("cors");
 app.use(cors({
-  origin: ["http://localhost:5173", "https://donor-link-one.vercel.app"], // Frontend URL
+  origin: ["http://localhost:5173", "https://donor-link-xzed.vercel.app"], // Frontend URL
   credentials: true, // Allow cookies if needed
 }));
 
