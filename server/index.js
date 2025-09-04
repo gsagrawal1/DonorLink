@@ -25,7 +25,7 @@ const userRoutes = require('./routes/user')
 app.use("/api", staticRoutes)
 app.use("/api/user",checkForAuthenticationCookie, userRoutes)
 
-const clientBuildPath = path.join(__dirname, "..", "client", "build");
+const clientBuildPath = path.join(__dirname, "..", "client", "dist");
 
 // More detailed logging to confirm the path during deployment.
 console.log(`Server __dirname: ${__dirname}`);
@@ -47,6 +47,7 @@ app.get(/^(?!\/api).*/, (req, res) => {
     }
   });
 });
+
 
 
 app.listen(PORT , () => {
