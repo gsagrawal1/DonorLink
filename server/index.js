@@ -25,6 +25,7 @@ const userRoutes = require('./routes/user')
 app.use("/api", staticRoutes)
 app.use("/api/user",checkForAuthenticationCookie, userRoutes)
 
+app.use(express.static(path.join(__dirname, "../client/build")));
 app.get(/^(?!\/api).*/, (req, res) => {
   res.sendFile(path.join(__dirname, "../client/build", "index.html"));
 });
