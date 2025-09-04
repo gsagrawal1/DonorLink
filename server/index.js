@@ -1,6 +1,7 @@
 require("dotenv").config()
 const express = require('express')
 const mongoose = require('mongoose')
+const path = require('path')
 const cookieParser = require('cookie-parser');
 const app = express()
 
@@ -24,6 +25,9 @@ const userRoutes = require('./routes/user')
 app.use("/api", staticRoutes)
 app.use("/api/user",checkForAuthenticationCookie, userRoutes)
 
+app.get(/^(?!\/api).*/, (req, res) => {
+  res.sendFile(path.join(__dirname, "../client/build", "index.html"));
+});
 
 app.listen(PORT , () => {
     console.log("Server Started at :" + PORT)
