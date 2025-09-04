@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://donorlink-e3en.onrender.com", // backend URL
+  baseURL: "https://donorlink-e3en.onrender.com/api", // backend URL
   withCredentials: true,            // required for cookies
 });
 
