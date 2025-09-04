@@ -25,9 +25,13 @@ const userRoutes = require('./routes/user')
 app.use("/api", staticRoutes)
 app.use("/api/user",checkForAuthenticationCookie, userRoutes)
 
-app.use(express.static(path.join(__dirname, "../client/build")));
+const clientBuildPath = path.resolve(__dirname, "../client/build");
+
+// 1. Serve static files (CSS, JS, images) from the React build directory.
+// Express will look in the 'clientBuildPath' for any files requested.
+app.use(express.static(clientBuildPath));
 app.get(/^(?!\/api).*/, (req, res) => {
-  res.sendFile(path.join(__dirname, "../client/build", "index.html"));
+  res.sendFile(path.join(clientBuildPath, "index.html"));
 });
 
 app.listen(PORT , () => {
