@@ -1,7 +1,6 @@
 require("dotenv").config()
 const express = require('express')
 const mongoose = require('mongoose')
-const path = require("path");
 const cookieParser = require('cookie-parser');
 const app = express()
 
@@ -16,16 +15,14 @@ app.use(cors({
   origin: "http://localhost:5173", // Frontend URL
   credentials: true, // Allow cookies if needed
 }));
+
 const {checkForAuthenticationCookie} = require('./middlewares/authentication')
 const {authorize} = require('./middlewares/authorization')
 const staticRoutes = require('./routes/static')
 const userRoutes = require('./routes/user')
 
-app.use("/", staticRoutes)
-app.use("/",checkForAuthenticationCookie, userRoutes)
-
-
-
+app.use("/api", staticRoutes)
+app.use("/api/user",checkForAuthenticationCookie, userRoutes)
 
 
 app.listen(PORT , () => {

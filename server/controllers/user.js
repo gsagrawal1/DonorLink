@@ -25,7 +25,7 @@ async function handleSignUp(req, res) {
 async function handleLogin(req, res) {
   const { email, password } = req.body;
   try {
-    const Token = await User.matchPasswordAndGenerateToken(email, password);
+    const Token = await User.matchPasswordAndGenerateToken(email, password)
     return res.status(200).json({
       token : Token
     });

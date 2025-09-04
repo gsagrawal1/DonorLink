@@ -26,17 +26,21 @@ userSchema.pre('save', function(next) {
     this.password = hashedPassword
     next()
 })
-userSchema.static('matchPasswordAndGenerateToken', async function(email, password) {
+userSchema.statics.matchPasswordAndGenerateToken = async function(email, password) {
     const user = await this.findOne({email})
     if(!user) return null
     const salt = user.salt
     const hashedPassword = user.password
 
     const userProvidedHashPassword = createHmac("sha256", salt).update(password).digest("hex")
-
     if(hashedPassword !== userProvidedHashPassword) throw new Error('Incorrect Password') ;
+    console.log("User:", user)
+console.log("Salt:", salt)
+console.log("Stored hash:", hashedPassword)
+console.log("Provided hash:", userProvidedHashPassword)
     const token = createTokenForUser(user)
+      console.log(token)
     return token
-})
+}
 const User = mongoose.model("user", userSchema);
 module.exports = User;

@@ -1,8 +1,10 @@
 const JWT = require('jsonwebtoken')
 
-const secret_key = process.env.secret_key
+const secret_key = process.env.SECRET_KEY
 
 function createTokenForUser(user){
+    if(!secret_key) throw new Error("Secret key is missing!")
+        console.log(secret_key)
     const payload = {
         _id : user._id,
         email : user.email,

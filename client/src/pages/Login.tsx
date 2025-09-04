@@ -17,8 +17,9 @@ export default function Login() {
         { email, password },
         { withCredentials: true }
       );
+      console.log(response.data);
       localStorage.setItem("token", response.data.token);
-      console.log(response);
+      
       window.location.href = "/";
     } catch (err: any) {
       setError(err.response?.data?.message || "Login failed");
