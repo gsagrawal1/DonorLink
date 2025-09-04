@@ -2,6 +2,7 @@ require("dotenv").config()
 const express = require('express')
 const mongoose = require('mongoose')
 const path = require('path')
+const fs = require('fs');
 const cookieParser = require('cookie-parser');
 const app = express()
 
@@ -25,29 +26,41 @@ const userRoutes = require('./routes/user')
 app.use("/api", staticRoutes)
 app.use("/api/user",checkForAuthenticationCookie, userRoutes)
 
-const clientBuildPath = path.join(__dirname, "..", "client", "dist");
+const clientDistPath = path.resolve(__dirname, "..", "client", "dist");
 
-// More detailed logging to confirm the path during deployment.
 console.log(`Server __dirname: ${__dirname}`);
-console.log(`Attempting to serve static files from: ${clientBuildPath}`);
+console.log(`Serving static files from absolute path: ${clientDistPath}`);
 
-// 1. Serve static files (CSS, JS, images).
-app.use(express.static(clientBuildPath));
+// --- Diagnostic Logging ---
+// Check if the directory and index.html file exist when the server starts.
+try {
+  const stats = fs.statSync(clientDistPath);
+  if (stats.isDirectory()) {
+    console.log(`SUCCESS: The directory "${clientDistPath}" exists.`);
+    const indexPath = path.join(clientDistPath, 'index.html');
+    fs.statSync(indexPath);
+    console.log(`SUCCESS: The file "${indexPath}" exists.`);
+  }
+} catch (error) {
+  console.error(`ERROR: Could not find client build files. Looked for "${clientDistPath}".`);
+  console.error(error.message);
+}
+// --- End Diagnostic Logging ---
+
+
+// 1. Serve static files from the calculated absolute path.
+app.use(express.static(clientDistPath));
 
 // 2. The SPA fallback. Serves index.html for any non-API, non-file requests.
 app.get(/^(?!\/api).*/, (req, res) => {
-  const indexPath = path.join(clientBuildPath, "index.html");
-  console.log(`Fallback for "${req.path}", sending file: ${indexPath}`);
-  
+  const indexPath = path.join(clientDistPath, "index.html");
   res.sendFile(indexPath, (err) => {
     if (err) {
-      // Log the error if sending the file fails.
       console.error('Error sending index.html:', err);
-      res.status(500).send("An error occurred while trying to serve the application.");
+      res.status(500).send("Could not serve the application's main file.");
     }
   });
 });
-
 
 
 app.listen(PORT , () => {
