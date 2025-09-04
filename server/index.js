@@ -25,14 +25,29 @@ const userRoutes = require('./routes/user')
 app.use("/api", staticRoutes)
 app.use("/api/user",checkForAuthenticationCookie, userRoutes)
 
-const clientBuildPath = path.resolve(__dirname, "../client/build");
+const clientBuildPath = path.join(__dirname, "..", "client", "build");
 
-// 1. Serve static files (CSS, JS, images) from the React build directory.
-// Express will look in the 'clientBuildPath' for any files requested.
+// More detailed logging to confirm the path during deployment.
+console.log(`Server __dirname: ${__dirname}`);
+console.log(`Attempting to serve static files from: ${clientBuildPath}`);
+
+// 1. Serve static files (CSS, JS, images).
 app.use(express.static(clientBuildPath));
+
+// 2. The SPA fallback. Serves index.html for any non-API, non-file requests.
 app.get(/^(?!\/api).*/, (req, res) => {
-  res.sendFile(path.join(clientBuildPath, "index.html"));
+  const indexPath = path.join(clientBuildPath, "index.html");
+  console.log(`Fallback for "${req.path}", sending file: ${indexPath}`);
+  
+  res.sendFile(indexPath, (err) => {
+    if (err) {
+      // Log the error if sending the file fails.
+      console.error('Error sending index.html:', err);
+      res.status(500).send("An error occurred while trying to serve the application.");
+    }
+  });
 });
+
 
 app.listen(PORT , () => {
     console.log("Server Started at :" + PORT)
